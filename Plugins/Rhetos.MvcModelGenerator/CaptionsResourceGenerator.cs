@@ -63,12 +63,10 @@ namespace Rhetos.MvcModelGenerator
         public static string ResourcesAssemblyName { get { return "Captions"; } }
         public static string ResourcesFileName { get { return "Captions.resx"; } }
         public static string ResourcesFilePath { get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Generated", ResourcesFileName); } }
-        public static string CompiledResourcesFilePath { get { return Path.ChangeExtension(ResourcesFilePath, ResourceExtension); } }
+        public static string CompiledResourcesFilePath { get { return Path.ChangeExtension(ResourcesFilePath, "resources"); } }
         public static string ResourcesNamespaceName { get { return "Rhetos.Mvc"; } }
         public static string ResourcesClassName { get { return "Captions"; } }
         public static string ResourcesClassFullName { get { return ResourcesNamespaceName + "." + ResourcesClassName; } }
-        private static readonly string ResourceExtension = "resources";
-        public static string ResourceFullName => $"{ResourcesClassFullName}.{ResourceExtension}";
         public static string ResourcesAssemblyDllPath { get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Generated", ResourcesAssemblyName + ".dll"); } }
 
         public void Generate()
@@ -84,7 +82,7 @@ namespace Rhetos.MvcModelGenerator
             var assemblySource = GenerateResourcesCs();
             _performanceLogger.Write(sw, "CaptionsResourceGenerator generated cs");
 
-            var manifestResources = new List<ManifestResource> { new ManifestResource { Name = ResourceFullName, Path = CompiledResourcesFilePath } };
+            var manifestResources = new List<ManifestResource> { new ManifestResource { Name = Path.GetFileName(CompiledResourcesFilePath), Path = CompiledResourcesFilePath } };
             _assemblyGenerator.Generate(assemblySource, ResourcesAssemblyDllPath, manifestResources);
             _performanceLogger.Write(sw, "CaptionsResourceGenerator generated dll");
         }
@@ -160,7 +158,7 @@ namespace Rhetos.MvcModelGenerator
                 {
                     typeof(object).Assembly.Location, // Location of the mscorlib.dll
                     typeof(Uri).Assembly.Location // Location of the System.dll
-                } 
+                }
             };
         }
 
